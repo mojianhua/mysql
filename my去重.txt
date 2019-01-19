@@ -1,0 +1,13 @@
+DELETE FROM company_news WHERE create_time IN (SELECT create_time FROM (SELECT create_time FROM company_news GROUP BY create_time HAVING COUNT(create_time) > 1) as tmp)  AND  nid NOT IN (SELECT nid FROM (SELECT min(nid) as nid FROM company_news GROUP BY create_time HAVING count(create_time) > 1) AS tmp2 ) #单字段查重删除重复，留下最早的一条数据
+
+SELECT create_time,count(create_time) as count FROM company_news_copy1 GROUP BY create_time HAVING count(create_time) > 1 #单字段查重
+
+SELECT create_time,title,count(*) as count FROM company_news_copy1 GROUP BY create_time,title HAVING count > 1 #多字段查重
+
+DELETE FROM company_news WHERE create_time IN (SELECT create_time FROM (SELECT create_time FROM company_news GROUP BY create_time HAVING COUNT(create_time) > 1) as tmp)  AND nid NOT IN (SELECT nid FROM (SELECT min(nid) as nid FROM company_news GROUP BY create_time HAVING count(create_time) > 1) AS tmp2 ) #单字段查重删除重复，留下最旧的一条数据
+
+SELECT * FROM company_news WHERE create_time IN (SELECT create_time FROM company_news GROUP BY create_time HAVING COUNT(create_time) > 1) and nid not in (SELECT min(nid) FROM company_news GROUP BY create_time HAVING count(create_time) > 1) #查询单字段重复数据，剔除最旧的那条数据
+
+select * FROM company_news WHERE (create_time,title) IN (SELECT create_time,title FROM company_news GROUP BY create_time,title HAVING count(*) > 1) and nid not in (SELECT MIN(nid) FROM company_news GROUP BY create_time,title HAVING count(*) > 1)  #查询多字段重复数据。剔除最旧的那条数据
+
+DELETE FROM company_news WHERE (create_time,title) IN (SELECT create_time,title FROM (SELECT create_time,title FROM company_news GROUP BY create_time,title HAVING COUNT(*) > 1) AS tmp1) AND nid not IN (SELECT nid FROM (SELECT min(nid) as nid FROM company_news GROUP BY create_time,title HAVING count(*) > 1) AS tmp2) #多字段查重删除重复，留下最旧的一条数据
