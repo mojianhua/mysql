@@ -1,0 +1,37 @@
+1、安装java命令如下
+yum install java-1.7.0-openjdk
+2、获取mycat
+wget http://dl.mycat.io/1.6.5/Mycat-server-1.6.5-release-20180122220033-linux.tar.gz
+3、建立用户
+3.1:adduser mycat
+4、解压文件
+tar -zxvf Mycat
+5、移动软件目录
+mv mycat /usr/local/
+6、修改文件权限目录
+chown mycat:mycat -R mycat
+7、加入环境变量
+7.1：vi /etc/profile
+7.2：export JAVA_HOME=/usr
+7.3：export MY_CAT=/usr/local/mycat
+8、启动mycat
+8.1：进入mycat中bin目录
+8.2：startup_nowrap.sh
+8.3：修改配置在startup_nowrap.sh中的JAVA_OPTS配置中
+9、mycat配置文件
+9.1：schema.xml：用于配置逻辑库表及数据节点
+9.2：rule.xml：用于配置表的分片规则
+9.3：server.xml：用于配置服务器权限
+9.4：
+schemal.xml 
+<schema><table></table></schema>定义罗基库表
+其中schema定义逻辑库，table定义逻辑表
+<dataNode></dateNode>定义数据节点
+<dataHost></dataHost>定义数据节点的物理数据源
+rule.xml
+<tableRule name=""></tableRule>定义表使用的分片规则
+<function name=""></function>定义分片算法
+server.xml
+<system><property name=""></property></system>定义与mycat系统相关的一些重要配置，比如：端口号、系统使用内存大小等等
+<user></user>定义连接mycat的用户（账号、密码等）
+注意：这里定义的用户和后端数据库的实际用户时不一样的
