@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mycat:server SYSTEM "server.dtd">  
+<mycat:server xmlns:mycat="http://io.mycat/">  
+        <system>  
+            <!--   
+                <property name="processors">32</property>  
+                <property name="processorExecutor">32</property>   
+                <property name="bindIp">0.0.0.0</property>   
+                <property name="frontWriteQueueSize">4096</property>  
+                <property name="idleTimeout">300000</property>  
+                <property name="mutiNodePatchSize">100</property>  
+            -->  
+                <property name="defaultSqlParser">druidparser</property>  
+                <property name="mutiNodeLimitType">1</property>  
+				<!-- mycat的端口 -->
+                <property name="serverPort">8066</property>  
+				<!-- mycat的管理端口 -->
+                <property name="managerPort">9066</property>   
+        </system>  
+        <!-- 任意设置登陆 mycat 的用户名,密码,数据库  -->
+		<!-- 		
+        <user name="test">  
+                <property name="password">test</property>  
+                <property name="schemas">TESTDB</property>  
+        </user>  
+
+        <user name="user">  
+                <property name="password">user</property>  
+                <property name="schemas">TESTDB</property>  
+                <property name="readOnly">true</property>  
+        </user>  
+          
+        <quarantine>   
+           <whitehost>  
+              <host host="127.0.0.1" user="mycat"/>  
+              <host host="127.0.0.2" user="mycat"/>  
+           </whitehost>  
+       <blacklist check="false"></blacklist>  
+        </quarantine>  
+        -->
+		
+		<!-- 任意设置登陆 name:mycat的用户名，password:mycat的密码，schemas:mycat的逻辑表，和schema.xml中的schema字段里面的name对应  -->  
+		<user name="jim">  
+                <property name="password">jim</property>  
+                <property name="schemas">JIMTESTDB</property>  
+        </user>  
+</mycat:server>  

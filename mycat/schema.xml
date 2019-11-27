@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!DOCTYPE mycat:schema SYSTEM "schema.dtd">
+<mycat:schema xmlns:mycat="http://io.mycat/">
+        	<!-- name:mycat逻辑库的数据库名，dataNode:默认分片,checkSQLschema:如果带mycat的逻辑库是否报错（true会自动过滤mycat逻辑库名字，反正报错），sqlMaxLimit:默认最大查询条数 -->
+		<schema name="JIMTESTDB" checkSQLschema="false" sqlMaxLimit="100">
+                <!-- name:定义逻辑表的表名,dataNode:所属的dataNode,rule:逻辑名字-->
+				<!-- <table name="company_banner" dataNode="jimTestdb1,jimTestdb2,jimTestdb3" rule="auto-sharding-long" /> -->
+					
+				<!-- db$0-99为mysql的数据库，即从db0至db99的数据库（100个）。 -->
+				<!-- <table name="travelrecord" dataNode="multipleDn$0-99,multipleDn2$100-199" rule="auto-shardinglong" ></table> -->
+				
+				
+				<!-- name:定义逻辑表的表名,dataNode:所属的dataNode,rule:逻辑名字,primaryKey:定该逻辑表对应真实表的主键。MyCat会缓存主键,type:该属性定义了逻辑表的类型-->
+                <table name="users" primaryKey="id" autoIncrement="true" dataNode="jimTestdb1" />
+                <table name="item" primaryKey="id" autoIncrement="true"  dataNode="jimTestdb2,jimTestdb3" rule="role1" />
+				
+			<!--
+			<table name="customer" primaryKey="ID" dataNode="dn1,dn2"
+				   rule="sharding-by-intfile">
+				   
+				 name:子表名称，primaryKey:定该逻辑表对应真实表的主键,joinKey:插入子表的时候会使用这个列的值查找父表存储的数据节点
+					joinKey:该属性指定的值一般为与父表建立关联关系的列名。Mycat首先获取 joinkey 的值，再通过 parentKey 属性指定的列名产生查询语句，通过执行该语句得到父表存储在哪个分片上。从而确定子表存储的位置。
+					
+				<childTable name="orders" primaryKey="ID" joinKey="customer_id"
+							parentKey="id">
+					<childTable name="order_items" joinKey="order_id"
+								parentKey="id" />
+				</childTable>
+				<childTable name="customer_addr" primaryKey="ID" joinKey="customer_id"
+							parentKey="id" />
+			</table>
+			-->
+        </schema>
+
+        <dataNode name="jimTestdb1" dataHost="dataHost01" database="company1" />
+		<dataNode name="jimTestdb2" dataHost="dataHost01" database="company2" />
+		<dataNode name="jimTestdb3" dataHost="dataHost01" database="company3" />
+
+        <!-- dataHost:dataNode的dataHost名字，
+		balance ：
+		（1）balance="0", 不开启读写分离机制，所有读操作都发送到当前可用的writeHost 上。
+		（2）balance="1"，全部的 readHost 与 stand by writeHost 参与 select 语句的负载均衡，简单的说，当双主双从模式(M1->S1，M2->S2，并且 M1 与 M2 互为主备)，正常情况下，M2,S1,S2 都参与 select 语句的负载均衡。
+		（3）balance="2"，所有读操作都随机的在 writeHost、 readhost 上分发。
+		（4）balance="3"，所有读请求随机的分发到 wiriterHost 对应的 readhost 执行，writerHost 不负担读压力，注意 balance=3 只在 1.4 及其以后版本有，1.3 没有。
+		writeType:
+		writeType="0", 所有写操作发送到配置的第一个 writeHost，第一个挂了切到还生存的第二个riteHost，重新启动后已切换后的为准，切换记录在配置文件中:dnindex.properties.
+		dbType:
+		指定后端连接的数据库类型，目前支持二进制的 mysql 协议，还有其他使用 JDBC 连接的数据库。例如：mongodb、 oracle、 spark 等
+		dbDriver:
+		指定连接后端数据库使用的 Driver，目前可选的值有 native 和 JDBC。使用native 的话，因为这个值执行的是二进制的 mysql 协议，所以可以使用 mysql 和 maridb。其他类型的数据库则需要使用 JDBC 驱动来支持。
+		switchType:
+		如果配置了这个属性 writeHost 下面的 readHost 仍旧可用，默认 0 可配置（0、 1）。
+		-->
+        <dataHost name="dataHost01" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native">
+                <heartbeat>select user()</heartbeat>
+                <!-- host:用于标识不同实例，一般 writeHost 我们使用*M1，readHost 我们用*S1,
+				url: 后端实例连接地址，如果是使用 native 的 dbDriver，则一般为 address:port 这种形式。用 JDBC 或其他的dbDriver，则需要特殊指定。当使用 JDBC 时则可以这么写：jdbc:mysql://localhost:3306/。
+				user:后端存储实例需要的用户名字，password:后端存储实例需要的密码，weight:权重，usingDecrypt:是否对密码加密默认 0 否 如需要开启配置 1，同时使用加密程序对密码加密
+				writeHost:写库配置
+				readHost:读库配置
+				-->
+                <writeHost host="hostM1" url="xx.xx.xxx.xx:3306" user="root" password="xxx">
+					<readHost host="hostS2" url="xx.xx.xx.xx:3306" user="root" password="xxx" />
+				</writeHost>
+        </dataHost>
+</mycat:schema>
