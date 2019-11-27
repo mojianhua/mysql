@@ -11,7 +11,8 @@
                 <property name="mutiNodePatchSize">100</property>  
             -->  
                 <property name="defaultSqlParser">druidparser</property>  
-                <property name="mutiNodeLimitType">1</property>  
+				<!-- 根据时间戳作为自增id，使用方式如：insert into item(id,value,indate) values(next value for MYCATSEQ_GLOBAL,100,now()); 其中，next value for MYCATSEQ_GLOBAL为自增id -->
+                <property name="mutiNodeLimitType">2</property>  
 				<!-- mycat的端口 -->
                 <property name="serverPort">8066</property>  
 				<!-- mycat的管理端口 -->
